@@ -1,0 +1,7 @@
+---
+- hosts: all
+  gather_facts: false
+  vars_files:
+    - awx_password.txt
+  roles:
+    - { role: awx_post_project }

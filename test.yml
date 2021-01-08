@@ -1,0 +1,51 @@
+---
+- hosts: local
+  gather_facts: false
+  tasks:
+    - uri:
+        url: https://www.example.com/api/v2/inventories/
+        validate_certs: no
+        force_basic_auth: yes
+        user: "admin"
+        password: "password"
+        method: GET
+      register: get_all_inventory
+
+    - debug:
+        msg: "{{ get_all_inventory.json.results | map(attribute='name') | list }}"
+
+    - debug:
+        msg: >-
+          {%- set output = [] -%}
+          {%- for result in get_all_inventory.json.results -%}
+            {{ output.append(result.id~'-'~result.name) }}
+          {%- endfor -%}
+          {{ output }}
+
+    - uri:
+        url: https://www.example.com/api/v2/inventories/1/hosts/
+        validate_certs: no
+        force_basic_auth: yes
+        user: "admin"
+        password: "password"
+        method: GET
+      register: get_hosts_for_inventory2
+
+    - debug:
+        msg: "{{ get_hosts_for_inventory2.json.results | map(attribute='name') | list }}"
+
+        #    - uri:
+        #        url: https://www.example.com/api/v2/inventories/999/hosts/
+        #        validate_certs: no
+        #        force_basic_auth: yes
+        #        user: "admin"
+        #        password: "password"
+        #        method: POST
+        #        body:
+        #          name: test
+        #          enabled: true
+        #          instance_id: "8.8.8.8"
+        #      register: uri_test_result2
+        #    - debug:
+        #        msg: "{{ uri_test_result2 }}"
+        #

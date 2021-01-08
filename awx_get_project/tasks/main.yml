@@ -1,0 +1,37 @@
+---
+# tasks file for awx_get_project
+- name: GET {{ awx_url }}/api/v2/projects/
+  uri:
+    url: "{{ awx_url }}/api/v2/projects/"
+    validate_certs: no
+    force_basic_auth: yes
+    user: "{{ awx_username }}"
+    password: "{{ awx_password }}"
+    method: GET
+  register: get_project
+
+- debug:
+    msg: "{{ get_project.json.results | map(attribute='name') | list }}"
+
+- debug:
+    msg: >-
+      {%- set output = [] -%}
+      {%- for result in get_project.json.results -%}
+        {{ output.append(result.id~'-'~result.name) }}
+      {%- endfor -%}
+      {{ output }}
+
+- name: GET {{ awx_url }}/api/v2/projects/{{ awx_project_id }}
+  uri:
+    url: "{{ awx_url }}/api/v2/projects/{{ awx_project_id }}/"
+    validate_certs: no
+    force_basic_auth: yes
+    user: "{{ awx_username }}"
+    password: "{{ awx_password }}"
+    method: GET
+  register: get_project_id_result
+  when: awx_project_id != ""
+
+- debug:
+    msg: "{{ get_project_id_result }}"
+  when: awx_project_id != ""

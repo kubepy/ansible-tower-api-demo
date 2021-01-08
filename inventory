@@ -1,0 +1,9 @@
+[local]
+localhosts ansible_connection=local
+
+[local:vars]
+awx_url="https://www.example.com"
+awx_inventory_id=4
+awx_project_id="6"
+awx_job_template_id="7"
+awx_credential_id="2"

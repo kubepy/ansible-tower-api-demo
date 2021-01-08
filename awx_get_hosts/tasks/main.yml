@@ -1,0 +1,27 @@
+---
+# tasks file for awx_get_hosts
+- name: GET {{ awx_url }}/api/v2/inventories/{{ awx_inventory_id }}/hosts/
+  uri:
+    url: "{{ awx_url }}/api/v2/inventories/{{ awx_inventory_id }}/hosts/"
+    validate_certs: no
+    force_basic_auth: yes
+    user: "{{ awx_username }}"
+    password: "{{ awx_password }}"
+    method: GET
+  register: get_hosts_for_inventory
+
+- debug:
+    msg: "{{ get_hosts_for_inventory.json.results | map(attribute='name') | list }}"
+    # msg: "{{ get_hosts_for_inventory.json.results }}"
+
+- debug:
+    msg: >-
+      {%- set output = [] -%}
+      {%- for result in get_hosts_for_inventory.json.results -%}
+        {%- if result.enabled | bool -%}
+          {{ output.append(result.enabled~'-'~result.name) }}
+        {%- else -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {{ output }}
+

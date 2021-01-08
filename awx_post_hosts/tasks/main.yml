@@ -1,0 +1,22 @@
+---
+# tasks file for awx_post_hosts
+- name: POST {{ awx_url }}/api/v2/inventories/{{ awx_inventory_id }}/hosts/
+  uri:
+    url: "{{ awx_url }}/api/v2/inventories/{{ awx_inventory_id }}/hosts/"
+    validate_certs: no
+    force_basic_auth: yes
+    body_format: json
+    body:
+      name: "{{ item }}"
+    user: "{{ awx_username }}"
+    password: "{{ awx_password }}"
+    method: POST
+  register: post_hosts_for_inventory
+  ignore_errors: yes
+  with_items:
+    - 1.1.1.1
+    - 8.8.8.8
+
+- debug:
+    msg: "{{ post_hosts_for_inventory }}"
+

@@ -1,0 +1,38 @@
+---
+# tasks file for awx_get_job_template
+- name: GET {{ awx_url }}/api/v2/job_templates/
+  uri:
+    url: "{{ awx_url }}/api/v2/job_templates/"
+    validate_certs: no
+    force_basic_auth: yes
+    user: "{{ awx_username }}"
+    password: "{{ awx_password }}"
+    method: GET
+  register: get_job_template
+
+- debug:
+    msg: "{{ get_job_template.json.results | map(attribute='name') | list }}"
+
+- debug:
+    msg: >-
+      {%- set output = [] -%}
+      {%- for result in get_job_template.json.results -%}
+        {{ output.append(result.id~'-'~result.name) }}
+      {%- endfor -%}
+      {{ output }}
+
+- name: GET {{ awx_url }}/api/v2/job_templates/{{ awx_job_template_id }}
+  uri:
+    url: "{{ awx_url }}/api/v2/job_templates/{{ awx_job_template_id }}/"
+    validate_certs: no
+    force_basic_auth: yes
+    user: "{{ awx_username }}"
+    password: "{{ awx_password }}"
+    method: GET
+  register: get_job_template_id_result
+  when: awx_job_template_id != ""
+
+- debug:
+    msg: "{{ get_job_template_id_result }}"
+  when: awx_job_template_id != ""
+

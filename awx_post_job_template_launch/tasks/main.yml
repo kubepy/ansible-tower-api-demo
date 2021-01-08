@@ -1,0 +1,16 @@
+---
+# tasks file for post_job_template_launch
+- name: POST {{ awx_url }}/api/v2/job_templates/
+  uri:
+    url: "{{ awx_url }}/api/v2/job_templates/7/launch/"
+    validate_certs: no
+    force_basic_auth: yes
+    user: "{{ awx_username }}"
+    password: "{{ awx_password }}"
+    method: POST
+  register: post_job_template_launch
+  ignore_errors: yes
+
+- debug:
+    msg: "{{ post_job_template_launch }}"
+

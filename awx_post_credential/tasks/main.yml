@@ -1,0 +1,23 @@
+---
+# tasks file for awx_post_credential
+
+- name: POST {{ awx_url }}/api/v2/credentials/
+  uri:
+    url: "{{ awx_url }}/api/v2/credentials/"
+    validate_certs: no
+    force_basic_auth: yes
+    user: "{{ awx_username }}"
+    password: "{{ awx_password }}"
+    body_format: json
+    body:
+      name: "test_credential"
+      user: 1
+      organization: null
+      credential_type: 1
+      inputs: {'username': 'root', 'password': 'root'}
+    method: POST
+  register: get_credential_id
+  ignore_errors: yes
+
+- debug:
+    msg: "{{ get_credential_id }}"

@@ -1,0 +1,22 @@
+---
+# tasks file for awx_get_inventory
+- name: GET {{ awx_url }}/api/v2/inventories/
+  uri:
+    url: "{{ awx_url }}/api/v2/inventories/"
+    validate_certs: no
+    force_basic_auth: yes
+    user: "{{ awx_username }}"
+    password: "{{ awx_password }}"
+    method: GET
+  register: get_all_inventory
+
+- debug:
+    msg: "{{ get_all_inventory.json.results | map(attribute='name') | list }}"
+
+- debug:
+    msg: >-
+      {%- set output = [] -%}
+      {%- for result in get_all_inventory.json.results -%}
+        {{ output.append(result.id~'-'~result.name) }}
+      {%- endfor -%}
+      {{ output }}

@@ -1,0 +1,21 @@
+---
+# tasks file for awx_post_job_template
+- name: GET {{ awx_url }}/api/v2/job_templates/
+  uri:
+    url: "{{ awx_url }}/api/v2/job_templates/"
+    validate_certs: no
+    force_basic_auth: yes
+    body_format: json
+    body:
+      project: 13
+      playbook: "playbooks/streisand.yml"
+      inventory: 4
+      name: "Some name"
+    user: "{{ awx_username }}"
+    password: "{{ awx_password }}"
+    method: POST
+  register: post_job_template
+  ignore_errors: yes
+
+- debug:
+    msg: "{{ post_job_template }}"

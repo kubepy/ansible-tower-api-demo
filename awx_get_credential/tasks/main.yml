@@ -1,0 +1,38 @@
+---
+# tasks file for awx_get_credential
+
+- name: GET {{ awx_url }}/api/v2/credentials/
+  uri:
+    url: "{{ awx_url }}/api/v2/credentials/"
+    validate_certs: no
+    force_basic_auth: yes
+    user: "{{ awx_username }}"
+    password: "{{ awx_password }}"
+    method: GET
+  register: get_credential_id
+
+- debug:
+    msg: "{{ get_credential_id.json.results | map(attribute='name') | list }}"
+    # msg: "{{ get_hosts_for_inventory.json.results }}"
+
+- debug:
+    msg: >-
+      {%- set output = [] -%}
+      {%- for result in get_credential_id.json.results -%}
+        {{ output.append(result.id~'-'~result.name) }}
+      {%- endfor -%}
+      {{ output }}
+
+- name: GET {{ awx_url }}/api/v2/credentials/{{ awx_credential_id }}
+  uri:
+    url: "{{ awx_url }}/api/v2/credentials/{{ awx_credential_id }}"
+    validate_certs: no
+    force_basic_auth: yes
+    user: "{{ awx_username }}"
+    password: "{{ awx_password }}"
+    method: GET
+  register: get_credential_id_detail
+
+- debug:
+    msg: "{{ get_credential_id_detail }}"
+
